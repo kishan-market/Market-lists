@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Market List Record</title>
+
+<style>
+:root{
+  --navy:#173853;
+  --navy-deep:#122a3d;
+  --paper:#eef2f4;
+  --line:#d7dde1;
+  --ink:#1c2733;
+  --soft:#5b6b78;
+  --tomato:#c1442d;
+  --white:#fff;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,sans-serif;
+  padding-bottom:180px;
+}
+
+.wrap{
+  max-width:520px;
+  margin:auto;
+}
+
+header{
+  background:linear-gradient(160deg,var(--navy),var(--navy-deep));
+  padding:22px 18px 20px;
+  border-radius:0 0 22px 22px;
+  color:white;
+}
+
+.brand h1{
+  margin:0 0 4px;
+  font-size:25px;
+}
+
+.brand span{
+  font-size:12px;
+  color:#a9c2d3;
+}
+
+.date-row{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+
+.date-field,
+.day-pill{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:12px;
+  padding:9px 12px;
+}
+
+.date-field{flex:1}
+
+.date-field label,
+.day-pill label{
+  display:block;
+  font-size:10px;
+  color:#9fb8ca;
+  margin-bottom:4px;
+}
+
+.date-field input{
+  width:100%;
+  background:transparent;
+  border:0;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.day-pill{
+  min-width:75px;
+}
+
+.day-name{
+  font-size:16px;
+  font-weight:bold;
+}
+
+main{
+  padding:16px 14px;
+}
+
+.list-empty{
+  text-align:center;
+  color:var(--soft);
+  padding:35px 10px;
+}
+
+.row{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
+}
+
+.row-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.row-num{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--paper);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.f-name{
+  flex:1;
+  border:0;
+  font-size:16px;
+  font-weight:bold;
+  min-width:0;
+}
+
+.del{
+  border:0;
+  background:transparent;
+  color:#aaa;
+  font-size:16px;
+}
+
+.row-bottom{
+  display:flex;
+  gap:8px;
+  padding-left:32px;
+}
+
+.f-qty,
+.f-price{
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:9px;
+  font-size:15px;
+  background:var(--paper);
+  min-width:0;
+}
+
+.f-qty{flex:1.1}
+.price-wrap{
+  flex:1;
+  display:flex;
+  align-items:center;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:0 8px;
+}
+
+.price-wrap input{
+  width:100%;
+  border:0;
+  background:transparent;
+  padding:9px 3px;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.add-btn{
+  width:100%;
+  padding:13px;
+  border:1.5px dashed #aebdc7;
+  border-radius:14px;
+  background:transparent;
+  color:var(--navy);
+  font-weight:bold;
+  font-size:15px;
+  margin:6px 0 18px;
+}
+
+.notes-block label{
+  display:block;
+  color:var(--soft);
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.notes-block textarea{
+  width:100%;
+  min-height:55px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  font-size:14px;
+  resize:vertical;
+}
+
+/* FOOTER */
+.footer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:var(--navy-deep);
+  color:white;
+  padding:12px 16px;
+  box-shadow:0 -5px 20px rgba(0,0,0,.2);
+}
+
+.footer-inner{
+  max-width:520px;
+  margin:auto;
+}
+
+.totals-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-bottom:10px;
+}
+
+.people-ctrl{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.people-ctrl .lbl,
+.total-block .lbl{
+  font-size:11px;
+  color:#9fb8ca;
+  font-weight:bold;
+}
+
+.stepper{
+  display:flex;
+  align-items:center;
+  background:rgba(255,255,255,.1);
+  border-radius:9px;
+}
+
+.stepper button{
+  width:30px;
+  height:30px;
+  border:0;
+  background:transparent;
+  color:white;
+  font-size:18px;
+}
+
+.stepper span{
+  min-width:22px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.total-block{
+  text-align:right;
+}
+
+.total-block .amt{
+  font-size:26px;
+  font-weight:bold;
+}
+
+.per-person{
+  font-size:11px;
+  color:#a9c2d3;
+}
+
+.action-row{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1.5fr 1.5fr;
+  gap:7px;
+}
+
+.btn{
+  padding:12px 7px;
+  border:0;
+  border-radius:11px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.btn-secondary{
+  background:rgba(255,255,255,.1);
+  color:white;
+}
+
+.btn-save{
+  background:var(--tomato);
+  color:white;
+}
+
+.btn-share{
+  background:#6c8f6b;
+  color:white;
+}
+
+/* HISTORY */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:flex-end;
+  z-index:20;
+}
+
+.overlay.open{
+  display:flex;
+}
+
+.sheet{
+  width:100%;
+  max-width:520px;
+  max-height:78vh;
+  overflow:auto;
+  margin:auto;
+  background:var(--paper);
+  border-radius:20px 20px 0 0;
+  padding:16px;
+}
+
+.sheet-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.sheet-head h2{
+  margin:0;
+}
+
+.sheet-close{
+  border:0;
+  background:none;
+  font-size:20px;
+}
+
+.hist-item{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+  margin:8px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.hist-info{
+  min-width:0;
+}
+
+.hist-date{
+  font-weight:bold;
+}
+
+.hist-meta{
+  font-size:12px;
+  color:var(--soft);
+  margin-top:4px;
+}
+
+.hist-actions{
+  display:flex;
+  gap:5px;
+}
+
+.hist-load,
+.hist-del{
+  border:0;
+  border-radius:8px;
+  padding:7px 10px;
+}
+
+.hist-load{
+  background:var(--navy);
+  color:white;
+}
+
+.hist-del{
+  background:#eee;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#1c2733;
+  color:white;
+  padding:10px 17px;
+  border-radius:20px;
+  opacity:0;
+  pointer-events:none;
+  z-index:50;
+}
+
+.toast.show{
+  opacity:1;
+}
+
+/* SHARE IMAGE */
+#shareCard{
+  position:fixed;
+  left:-99999px;
+  top:0;
+  width:700px;
+  background:white;
+  padding:40px;
+  font-family:Arial,sans-serif;
+}
+
+.share-title{
+  text-align:center;
+  font-size:34px;
+  font-weight:bold;
+  color:#173853;
+  margin-bottom:8px;
+}
+
+.share-date{
+  text-align:center;
+  color:#5b6b78;
+  font-size:18px;
+  margin-bottom:25px;
+}
+
+.share-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:18px;
+}
+
+.share-table th{
+  background:#173853;
+  color:white;
+  padding:13px;
+  text-align:left;
+}
+
+.share-table td{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+}
+
+.share-total{
+  margin-top:25px;
+  text-align:right;
+  font-size:26px;
+  font-weight:bold;
+  color:#173853;
+}
+
+.share-notes{
+  margin-top:18px;
+  padding:14px;
+  background:#eef2f4;
+  border-radius:10px;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <h1>Market List</h1>
+    <span>apna hisaab yahin rakhein</span>
+  </div>
+
+  <div class="date-row">
+    <div class="date-field">
+      <label>Date</label>
+      <input type="date" id="dateInput">
+    </div>
+
+    <div class="day-pill">
+      <label>Day</label>
+      <div class="day-name" id="dayName">—</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div id="listArea"></div>
+
+<button class="add-btn" id="addBtn">＋ Add item</button>
+
+<div class="notes-block">
+  <label>Notes</label>
+  <textarea id="notesInput"
+    placeholder="Koi aur baat, jaise dukaan ka naam..."></textarea>
+</div>
+
+</main>
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+<div class="footer-inner">
+
+<div class="totals-row">
+
+<div class="people-ctrl">
+  <div class="lbl">PEOPLE</div>
+
+  <div class="stepper">
+    <button id="peopleMinus">−</button>
+    <span id="peopleCount">1</span>
+    <button id="peoplePlus">+</button>
+  </div>
+</div>
+
+<div class="total-block">
+  <div class="lbl">TOTAL</div>
+  <div class="amt" id="totalAmt">₹0</div>
+  <div class="per-person">
+    per person <b id="perPersonAmt">₹0</b>
+  </div>
+</div>
+
+</div>
+
+<div class="action-row">
+
+<button class="btn btn-secondary" id="newBtn">
+New
+</button>
+
+<button class="btn btn-save" id="saveBtn">
+Save
+</button>
+
+<button class="btn btn-share" id="shareBtn">
+📤 JPG
+</button>
+
+<button class="btn btn-secondary" id="historyBtn">
+History
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- HISTORY -->
+
+<div class="overlay" id="overlay">
+
+<div class="sheet">
+
+<div class="sheet-head">
+<h2>Past trips</h2>
+<button class="sheet-close" id="sheetClose">✕</button>
+</div>
+
+<div id="historyList"></div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HIDDEN SHARE CARD -->
+
+<div id="shareCard">
+
+<div class="share-title">
+🧺 Market List
+</div>
+
+<div class="share-date" id="shareDate"></div>
+
+<table class="share-table">
+
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Quantity</th>
+<th>Price</th>
+</tr>
+</thead>
+
+<tbody id="shareTableBody"></tbody>
+
+</table>
+
+<div class="share-total" id="shareTotal">
+Total: ₹0
+</div>
+
+<div class="share-notes" id="shareNotes"></div>
+
+</div>
+
+<script>
+
+/* =========================
+   BASIC VARIABLES
+========================= */
+
+const listArea = document.getElementById("listArea");
+const dateInput = document.getElementById("dateInput");
+const dayName = document.getElementById("dayName");
+const notesInput = document.getElementById("notesInput");
+const totalAmt = document.getElementById("totalAmt");
+const perPersonAmt = document.getElementById("perPersonAmt");
+const peopleCount = document.getElementById("peopleCount");
+const toast = document.getElementById("toast");
+
+let people = 1;
+
+const DAYS = [
+"Sunday",
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday"
+];
+
+
+/* =========================
+   TODAY
+========================= */
+
+function today(){
+
+const d = new Date();
+
+const month = String(d.getMonth()+1).padStart(2,"0");
+const day = String(d.getDate()).padStart(2,"0");
+
+return d.getFullYear()+"-"+month+"-"+day;
+
+}
+
+
+/* =========================
+   DAY NAME
+========================= */
+
+function updateDay(){
+
+if(!dateInput.value){
+dayName.textContent="—";
+return;
+}
+
+const d = new Date(dateInput.value+"T00:00:00");
+
+dayName.textContent =
+DAYS[d.getDay()].slice(0,3);
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function showToast(message){
+
+toast.textContent=message;
+toast.classList.add("show");
+
+setTimeout(()=>{
+toast.classList.remove("show");
+},1800);
+
+}
+
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+function emptyState(){
+
+if(listArea.children.length===0){
+
+listArea.innerHTML=
+`<div class="list-empty">
+🧺<br><br>
+Abhi list khaali hai — neeche se item add karein.
+</div>`;
+
+}
+
+}
+
+
+/* =========================
+   ADD ITEM
+========================= */
+
+function addRow(data={}){
+
+const empty =
+listArea.querySelector(".list-empty");
+
+if(empty) empty.remove();
+
+const row=document.createElement("div");
+
+row.className="row";
+
+row.innerHTML=`
+
+<div class="row-top">
+
+<span class="row-num">
+${listArea.children.length+1}
+</span>
+
+<input
+class="f-name"
+placeholder="Item name"
+value="${data.name || ""}"
+>
+
+<button class="del">✕</button>
+
+</div>
+
+<div class="row-bottom">
+
+<input
+class="f-qty"
+placeholder="Qty (e.g. 500g)"
+value="${data.qty || ""}"
+>
+
+<div class="price-wrap">
+
+<span>₹</span>
+
+<input
+class="f-price"
+inputmode="decimal"
+placeholder="0"
+value="${data.price || ""}"
+>
+
+</div>
+
+</div>
+`;
+
+listArea.appendChild(row);
+
+
+/* DELETE */
+
+row.querySelector(".del").onclick=()=>{
+
+row.remove();
+
+renumber();
+
+emptyState();
+
+calculate();
+
+};
+
+
+/* PRICE */
+
+row.querySelector(".f-price")
+.addEventListener("input",calculate);
+
+}
+
+
+/* =========================
+   RENUMBER
+========================= */
+
+function renumber(){
+
+document
+.querySelectorAll(".row")
+.forEach((row,index)=>{
+
+row.querySelector(".row-num")
+.textContent=index+1;
+
+});
+
+}
+
+
+/* =========================
+   CALCULATE TOTAL
+========================= */
+
+function calculate(){
+
+let total=0;
+
+document
+.querySelectorAll(".f-price")
+.forEach(input=>{
+
+const value=parseFloat(input.value);
+
+if(!isNaN(value)){
+total+=value;
+}
+
+});
+
+totalAmt.textContent="₹"+Math.round(total);
+
+perPersonAmt.textContent=
+"₹"+Math.round(total/people);
+
+}
+
+
+/* =========================
+   GET ITEMS
+========================= */
+
+function getItems(){
+
+const items=[];
+
+document
+.querySelectorAll(".row")
+.forEach(row=>{
+
+const name=row
+.querySelector(".f-name").value.trim();
+
+const qty=row
+.querySelector(".f-qty").value.trim();
+
+const price=row
+.querySelector(".f-price").value.trim();
+
+if(name || qty || price){
+
+items.push({
+name:name,
+qty:qty,
+price:price
+});
+
+}
+
+});
+
+return items;
+
+}
+
+
+/* =========================
+   NEW
+========================= */
+
+document
+.getElementById("newBtn")
+.onclick=()=>{
+
+listArea.innerHTML="";
+
+notesInput.value="";
+
+people=1;
+
+peopleCount.textContent=1;
+
+dateInput.value=today();
+
+updateDay();
+
+emptyState();
+
+calculate();
+
+};
+
+
+/* =========================
+   PEOPLE
+========================= */
+
+document
+.getElementById("peopleMinus")
+.onclick=()=>{
+
+people=Math.max(1,people-1);
+
+peopleCount.textContent=people;
+
+calculate();
+
+};
+
+
+document
+.getElementById("peoplePlus")
+.onclick=()=>{
+
+people=Math.min(50,people+1);
+
+peopleCount.textContent=people;
+
+calculate();
+
+};
+
+
+/* =========================
+   ADD BUTTON
+========================= */
+
+document
+.getElementById("addBtn")
+.onclick=()=>addRow();
+
+
+/* =========================
+   DATE
+========================= */
+
+dateInput.addEventListener(
+"change",
+updateDay
+);
+
+
+/* =========================
+   SAVE
+========================= */
+
+document
+.getElementById("saveBtn")
+.onclick=async()=>{
+
+const items=getItems();
+
+let total=0;
+
+items.forEach(item=>{
+
+const p=parseFloat(item.price);
+
+if(!isNaN(p)) total+=p;
+
+});
+
+const trip={
+
+date:dateInput.value,
+
+day:DAYS[
+new Date(dateInput.value+"T00:00:00")
+.getDay()
+],
+
+items:items,
+
+notes:notesInput.value,
+
+people:people,
+
+total:Math.round(total)
+
+};
+
+try{
+
+localStorage.setItem(
+"trip-"+trip.date,
+JSON.stringify(trip)
+);
+
+showToast("Trip saved ✓");
+
+}catch(e){
+
+showToast("Save failed");
+
+}
+
+};
+
+
+/* =========================
+   HISTORY
+========================= */
+
+const overlay=
+document.getElementById("overlay");
+
+const historyList=
+document.getElementById("historyList");
+
+
+document
+.getElementById("historyBtn")
+.onclick=()=>{
+
+renderHistory();
+
+overlay.classList.add("open");
+
+};
+
+
+document
+.getElementById("sheetClose")
+.onclick=()=>{
+
+overlay.classList.remove("open");
+
+};
+
+
+async function renderHistory(){
+
+historyList.innerHTML="";
+
+let trips=[];
+
+for(let i=0;i<localStorage.length;i++){
+
+const key=localStorage.key(i);
+
+if(key.startsWith("trip-")){
+
+try{
+
+trips.push(
+JSON.parse(
+localStorage.getItem(key)
+)
+);
+
+}catch(e){}
+
+}
+
+}
+
+trips.sort((a,b)=>
+b.date.localeCompare(a.date)
+);
+
+
+if(trips.length===0){
+
+historyList.innerHTML=
+`<div class="hist-item">
+Koi saved trip nahi hai abhi.
+</div>`;
+
+return;
+
+}
+
+
+trips.forEach(trip=>{
+
+const card=document.createElement("div");
+
+card.className="hist-item";
+
+card.innerHTML=`
+
+<div class="hist-info">
+
+<div class="hist-date">
+${trip.date} · ${trip.day}
+</div>
+
+<div class="hist-meta">
+${trip.items.length} items · ₹${trip.total} total
+</div>
+
+</div>
+
+<div class="hist-actions">
+
+<button class="hist-load">
+Open
+</button>
+
+<button class="hist-del">
+🗑
+</button>
+
+</div>
+`;
+
+
+card.querySelector(".hist-load")
+.onclick=()=>loadTrip(trip);
+
+
+card.querySelector(".hist-del")
+.onclick=()=>{
+
+localStorage.removeItem(
+"trip-"+trip.date
+);
+
+card.remove();
+
+showToast("Deleted");
+
+};
+
+
+historyList.appendChild(card);
+
+});
+
+}
+
+
+/* =========================
+   LOAD TRIP
+========================= */
+
+function loadTrip(trip){
+
+listArea.innerHTML="";
+
+trip.items.forEach(item=>{
+addRow(item);
+});
+
+dateInput.value=trip.date;
+
+notesInput.value=trip.notes || "";
+
+people=trip.people || 1;
+
+peopleCount.textContent=people;
+
+updateDay();
+
+calculate();
+
+overlay.classList.remove("open");
+
+showToast("Trip loaded ✓");
+
+}
+
+
+/* ==================================================
+   SHARE AS JPG
+================================================== */
+
+document
+.getElementById("shareBtn")
+.onclick=async()=>{
+
+const items=getItems();
+
+if(items.length===0){
+
+showToast("Pehle items add karein");
+
+return;
+
+}
+
+
+/* FILL SHARE CARD */
+
+document
+.getElementById("shareDate")
+.textContent=
+dateInput.value+
+" · "+
+dayName.textContent;
+
+
+/* TABLE */
+
+const tbody=
+document.getElementById("shareTableBody");
+
+tbody.innerHTML="";
+
+let total=0;
+
+items.forEach((item,index)=>{
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+
+<td>${index+1}</td>
+
+<td>
+${escapeHTML(item.name)}
+</td>
+
+<td>
+${escapeHTML(item.qty)}
+</td>
+
+<td>
+₹${escapeHTML(item.price)}
+</td>
+
+`;
+
+tbody.appendChild(tr);
+
+const p=parseFloat(item.price);
+
+if(!isNaN(p)) total+=p;
+
+});
+
+
+document
+.getElementById("shareTotal")
+.textContent=
+"Total: ₹"+Math.round(total);
+
+
+document
+.getElementById("shareNotes")
+.textContent=
+notesInput.value
+?
+"Notes: "+notesInput.value
+:
+"";
+
+
+/* CREATE IMAGE */
+
+try{
+
+const canvas =
+await htmlToCanvas(
+document.getElementById("shareCard")
+);
+
+canvas.toBlob(async(blob)=>{
+
+if(!blob){
+
+showToast("JPG create nahi hua");
+
+return;
+
+}
+
+const file=new File(
+[blob],
+"market-list-"+dateInput.value+".jpg",
+{
+type:"image/jpeg"
+}
+);
+
+
+/* ANDROID SHARE */
+
+if(
+navigator.share &&
+navigator.canShare &&
+navigator.canShare({files:[file]})
+){
+
+try{
+
+await navigator.share({
+
+title:"Market List",
+
+text:"My Market List",
+
+files:[file]
+
+});
+
+}catch(e){
+
+if(e.name!=="AbortError"){
+downloadJPG(blob);
+}
+
+}
+
+}else{
+
+downloadJPG(blob);
+
+}
+
+},"image/jpeg",0.95);
+
+}catch(e){
+
+showToast("JPG banane me problem hui");
+
+}
+
+};
+
+
+/* =========================
+   HTML ESCAPE
+========================= */
+
+function escapeHTML(text){
+
+return String(text)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;");
+
+}
+
+
+/* =========================
+   SIMPLE HTML → CANVAS
+========================= */
+
+async function htmlToCanvas(element){
+
+/*
+  Browser me HTML ko JPG banane ke liye
+  html2canvas library use hogi.
+*/
+
+if(!window.html2canvas){
+
+await loadHtml2Canvas();
+
+}
+
+return await window.html2canvas(
+element,
+{
+scale:2,
+backgroundColor:"#ffffff",
+useCORS:true
+}
+);
+
+}
+
+
+/* =========================
+   LOAD HTML2CANVAS
+========================= */
+
+function loadHtml2Canvas(){
+
+return new Promise((resolve,reject)=>{
+
+const script=document.createElement("script");
+
+script.src=
+"https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+
+script.onload=resolve;
+
+script.onerror=reject;
+
+document.head.appendChild(script);
+
+});
+
+}
+
+
+/* =========================
+   DOWNLOAD JPG
+========================= */
+
+function downloadJPG(blob){
+
+const url=
+URL.createObjectURL(blob);
+
+const a=
+document.createElement("a");
+
+a.href=url;
+
+a.download=
+"market-list-"+dateInput.value+".jpg";
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+URL.revokeObjectURL(url);
+
+showToast("JPG saved ✓");
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+dateInput.value=today();
+
+updateDay();
+
+emptyState();
+
+calculate();
+
+</script>
+
+</body>
+</html>
